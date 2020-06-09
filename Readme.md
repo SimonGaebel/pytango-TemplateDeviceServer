@@ -1,4 +1,4 @@
-# Template for a Tango Device Server
+# Readme - Template for a Tango Device Server
 This is a template for a (PyTango) Tango Device Server (TDS) that helps you register and write your own TangoDS. Just clone the contents and alter them as you like. This is of course no sufficient replacement of the full Pytango (https://pytango.readthedocs.io/en/stable/) or Tango (https://tango-controls.readthedocs.io/en/latest/) Documentation.
 
 ## Registering a Tango DS
