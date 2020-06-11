@@ -10,7 +10,7 @@
 This is a template for a Tango Device Server, to be cloned and used as a start for your own TangoDS.
 '''
 
-from tango import AttrWriteType, DevState, DebugIt
+from tango import AttrWriteType, DevState, DebugIt, DispLevel
 from tango.server import Device, attribute, command, device_property
 
 #import the driver you will use
@@ -19,10 +19,14 @@ class TemplateDeviceServer(Device):
 
 	#------ Attributes ------#
 
-	humidity = attribute(name='Humidity',dtype=float, access = AttrWriteType.READ, doc='Example for an attribute that can only be read.')
+    humidity = attribute(label='Humidity',dtype=float, access = AttrWriteType.READ, doc='Example for an attribute that can only be read.')
 	
-	#optionally use fget/fset to point to read and write functions. Default is "read_temperature"/"write_temperature"
-    temperature = attribute(name='Temperature',fget='get_temp',dtype=float, access = AttrWriteType.READ_WRITE, doc='Example for an attribute that can be read/written.')
+	# optionally use fget/fset to point to read and write functions. Default is "read_temperature"/"write_temperature"
+    # added some optional attribute properties
+    temperature = attribute(label='Temperature',fget='get_temperature',dtype=float, access = AttrWriteType.READ_WRITE, 
+                            min_value = -273.15, min_alarm = -100, max_alarm = 100, min_warning = -50, max_warning = 50,
+                            unit='C', display_level=DispLevel.EXPERT, format="8.4f",
+                            doc='Example for an attribute that can be read/written.')
 
 
 
@@ -46,37 +50,39 @@ class TemplateDeviceServer(Device):
         #here you could initiate first contact to the hardware (driver)
         
         self.__temp = 0 #declaring values for the attributes and properties
-    	self.__humid = 0
-		self.__port = port
+        self.__humid = 0
+        #self.__port = port
 	
-	def delete_device(self):
-		self.set_state(DevState.OFF)
-		self.error_stream('A device was deleted!') #prints this line in logging mode "error" or lower
+    def delete_device(self):
+        self.set_state(DevState.OFF)
+        self.error_stream('A device was deleted!') #prints this line in logging mode "error" or lower
 	
 
 	# define what is executed when Tango checks for the state. Here you could inquire the state of the hardware and not just (as it is in default) of the TDS.
-	def get_state(self):
+    # default returns state but also sets state from ON to ALARM if some attribute alarm limits are surpassed
+    def dev_state(self):
 		#possible pseudo code:
 		# if hardware-state and TDS-state is ON:
 		#	return DevState.ON
+        return DevState
 	
 
-	def always_executed_hook(self):
-	#this is a method that is executed continuously but by default does nothing
-	#if you want something polled or done continuously, put it in this method
-		#check connection to hardware or whether status is acceptable etc.
-		pass
+    def always_executed_hook(self):
+	#this is a method that is executed continuously but by default does nothing.
+	#if you want something polled or done continuously, put it in this method.
+	#check connection to hardware or whether status is acceptable etc.
+        pass
 	
 	
 	#------ Read/Write functions ------#
 
-	def read_humidity(self): #this is default to read humidity
-		return self.__humid #returns the current value of the attribute "humidity"
+    def read_humidity(self): #this is default to read humidity
+        return self.__humid #returns the current value of the attribute "humidity"
     
-    def get_temp(self): #this was set by fget in attribute declaration
+    def get_temperature(self): #this was set by fget in attribute declaration
         return self.__temp
     
-    def write_temp(self,value):
+    def write_temperature(self,value):
         #possibly execute some function here to talk to the hardware (e.g. set temperature with a thermostat)
         self.__temp = value # update the declared server value of the attribute
     
