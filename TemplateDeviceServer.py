@@ -64,6 +64,8 @@ class TemplateDeviceServer(Device):
 		#possible pseudo code:
 		# if hardware-state and TDS-state is ON:
 		#	return DevState.ON
+        #else:
+        #   return DevState.FAULT
         return DevState
 	
 
