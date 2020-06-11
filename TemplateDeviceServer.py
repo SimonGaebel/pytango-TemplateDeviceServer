@@ -21,7 +21,7 @@ class TemplateDeviceServer(Device):
 
     humidity = attribute(label='Humidity',dtype=float, access = AttrWriteType.READ, doc='Example for an attribute that can only be read.')
 	
-	# optionally use fget/fset to point to read and write functions. Default is "read_temperature"/"write_temperature"
+    # optionally use fget/fset to point to read and write functions. Default is "read_temperature"/"write_temperature"
     # added some optional attribute properties
     temperature = attribute(label='Temperature',fget='get_temperature',dtype=float, access = AttrWriteType.READ_WRITE, 
                             min_value = -273.15, min_alarm = -100, max_alarm = 100, min_warning = -50, max_warning = 50,
@@ -106,7 +106,7 @@ class TemplateDeviceServer(Device):
         #this kind of method only allows one input parameter
         pass
     
-    #another example of an externally executable method
+    #more examples of externally executable methods
     @command()
     def Turn_Off(self):
         self.set_state(DevState.OFF)
