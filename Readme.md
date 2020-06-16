@@ -1,8 +1,9 @@
 # Template for a Tango Device Server
-This is a template for what your Readme for a Tango Device Server should look like. Direct further documentation of classes or methods used to the <em>doc</em> folder. 
+This is a template for what your Readme for a Tango Device Server should look like. This first abstract should summarize what your Tango DS is for.
+Direct further documentation of classes or methods used to the <em>docs</em> folder. Make sure the manuals you upload to <em>manuals</em> are freely accessible. 
 
 ## Installation
-Describe how to install necessary packages (maybe drivers) needed for your Tango DS. Maybe it is needed to install by <code>pip</code> or clone and install from another git. You could also refer to a manual (must not be proprietary) or upload a manual to the <em>man</em> folder yourself.
+Describe how to install necessary packages (maybe drivers) needed for your Tango DS. Maybe it is needed to install by <code>pip3</code> or clone and install from another git.
 
 ## Configuration
 (Optional)  
