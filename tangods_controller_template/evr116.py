@@ -1,61 +1,67 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+from tango import AttrWriteType, DispLevel, DevState
+from tango.server import Device, attribute, command, device_property, GreenMode
+from importlib.resources import files
+import numpy as np
 
 
-# Copyright (C) 2020  MBI-Division-B
-# MIT License, refer to LICENSE file
-# Author: Luca Barbera / Email: barbera@mbi-berlin.de
-
-
-from tango import AttrWriteType, DevState, DebugIt, DispLevel
-from tango.server import Device, attribute, command, device_property
-
-# import the drivers you will use
-
-
-class TemplateDeviceServer(Device):
-    '''
+class ControllerTemplate(Device):
+    SomeDeviceProperty = device_property(
+        dtype=(float,),
+        doc="duty cycle values",
+        default_value=np.array([0, 10, 20, 30, 40, 50, 60, 70, 80, 90]),
+    )
+    AnotherDeviceProperty = device_property(
+        dtype=(float,),
+        doc="measured values for the given duty cycle values",
+        default_value=np.array(
+            [0, 1.4, 2.77, 4.11, 5.45, 6.76, 8.07, 9.36, 10.44, 10.61]
+        ),
+    )
+    """
     This docstring should describe your Tango Class and optionally
     what it depends on (drivers etc).
-    '''
+    """
 
+    # ------ Attributes ------ #
 
-# ------ Attributes ------ #
-
-    humidity = attribute(label='Humidity',
-                         dtype=float,
-                         access=AttrWriteType.READ,
-                         doc='Example for an attribute that can only be read.')
+    humidity = attribute(
+        label="Humidity",
+        dtype=float,
+        access=AttrWriteType.READ,
+        doc="Example for an attribute that can only be read.",
+    )
 
     # optionally use fget/fset to point to read and write functions.
     # Default is "read_temperature"/"write_temperature".
     # Added some optional attribute properties.
-    temperature = attribute(label='Temperature',
-                            fget='get_temperature',
-                            dtype=float,
-                            access=AttrWriteType.READ_WRITE,
-                            display_level=DispLevel.EXPERT,
-                            min_value=-273.15,
-                            min_alarm=-100,
-                            max_alarm=100,
-                            min_warning=-50,
-                            max_warning=50,
-                            unit='C',
-                            format="8.4f",
-                            doc='Attribute that can be read/written.')
+    temperature = attribute(
+        label="Temperature",
+        fget="get_temperature",
+        dtype=float,
+        access=AttrWriteType.READ_WRITE,
+        display_level=DispLevel.EXPERT,
+        min_value=-273.15,
+        min_alarm=-100,
+        max_alarm=100,
+        min_warning=-50,
+        max_warning=50,
+        unit="C",
+        format="8.4f",
+        doc="Attribute that can be read/written.",
+    )
 
-
-# ------ Device Properties ------ #
+    # ------ Device Properties ------ #
     # device_properties will be set once per family-member and usually -
     # contain serial numbers or a certain port-ID that needs to be set once -
     # and will not change while the server is running.
 
     port = device_property(dtype=int, default_value=10000)
 
-# ------ default functions that are inherited from parent "Device" ------ #
+    # ------ default functions that are inherited from parent "Device" ------ #
     def init_device(self):
         Device.init_device(self)
-        self.info_stream('Connection established')  # prints this line while -
+        self.get_device_properties()
+        self.info_stream("Connection established")  # prints this line while -
         # in logging mode "info" or lower
         self.set_state(DevState.ON)
 
@@ -66,7 +72,7 @@ class TemplateDeviceServer(Device):
 
     def delete_device(self):
         self.set_state(DevState.OFF)
-        self.error_stream('A device was deleted!')  # prints this line while -
+        self.error_stream("A device was deleted!")  # prints this line while -
         # in logging mode "error" or lower.
 
     # define what is executed when Tango checks for the state.
@@ -88,7 +94,7 @@ class TemplateDeviceServer(Device):
         # check connection to hardware or whether status is acceptable etc.
         pass
 
-# ------ Read/Write functions ------ #
+    # ------ Read/Write functions ------ #
     def read_humidity(self):  # this is default to read humidity
         return self.__humid  # returns the value of the "humidity" attr.
 
@@ -100,15 +106,14 @@ class TemplateDeviceServer(Device):
         # (e.g. set temperature with a thermostat)
         self.__temp = value  # update the declared server value of the attr.
 
-# ------ Internal Methods ------ #
+    # ------ Internal Methods ------ #
     # method that works with multiple input parameters only "inside" this code
 
     def internal_method(self, param1, param2):
         # do something with param1, param2
         pass
 
-
-# ------ COMMANDS ------ #
+    # ------ COMMANDS ------ #
 
     @DebugIt()  # let the execution of this command be logged in debugging mode
     @command()  # make method executable through the client -
@@ -125,8 +130,3 @@ class TemplateDeviceServer(Device):
     @command()
     def turn_on(self):
         self.set_state(DevState.ON)
-
-
-# start the server
-if __name__ == "__main__":
-    TemplateDeviceServer.run_server()
