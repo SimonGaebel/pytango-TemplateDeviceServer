@@ -1,4 +1,4 @@
-from .evr116 import EVR116Controller
+from OxygenSensor import OxygenSensor
 
 # unfortunately we are not able to call the run_server of the MoenchZmqServer class directly
 # because even in case of static functions we are not able to call them if they belong to the class
@@ -13,5 +13,5 @@ def main():
     import sys
     import tango.server
 
-    args = ["EVR116"] + sys.argv[1:]
-    tango.server.run((EVR116Controller,), args=args)
+    args = ["OxygenSensor"] + sys.argv[1:]
+    tango.server.run((OxygenSensor,), args=args)
